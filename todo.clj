@@ -11,8 +11,10 @@
                      :title title
                      :done (not done)})))
 
+(defn remove-task [id tasks]
+  (vec (concat (subvec tasks 0 id) (subvec tasks (inc id)))))
 
-(defn main-loop [tasks] (println "Commands: add, list, check, quit")
+(defn main-loop [tasks] (println "Commands: add, list, check, remove, quit")
   (let [cmd (read-line)]
     (cond
       (= cmd "add")
@@ -35,6 +37,13 @@
   																									(let [new-tasks (toggle-task-completion id tasks)] (main-loop new-tasks))
 																											(do (println "Invalid ID.") (main-loop tasks)))
 																									))
+						(= cmd "remove") (do (print "Id: ") (flush)
+                     						(let [id-str (read-line)
+                                 id (Integer/parseInt id-str)]
+                             (if (and (< id (count tasks)) (>= id 0))
+                                (let [new-tasks (remove-task id tasks)] (main-loop new-tasks))
+																															 (do (println "Invalid ID.") (main-loop tasks))
+																													  )))
       (= cmd "quit") (println "Goodbye!")
 						:else (do (println "Invalid command...") (main-loop tasks))
 						)))
